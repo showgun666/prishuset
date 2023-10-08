@@ -51,11 +51,11 @@ def main():
 
         if choice == "1":
             # List of libraries from jetshop.txt to jetSL
-            js.read(jetshopfile)
+            js.read(jetshopfile, True)
 
         if choice == "2":
             # Read file and check for duplicates
-            js.duplicates(js.read(jetshopfile))
+            js.duplicates(js.read(jetshopfile), True)
 
         if choice == "3":
             # Write hidden files

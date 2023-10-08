@@ -7,7 +7,7 @@ Module for functions relating to jetshop
 # file == the file to be read and it is a jetshop file.
 # Checks that the file is in correct format
 # returns list of libraries with contents from txt file
-def read(file):
+def read(file, boolean=False):
     with open(file) as jetshop:
         currentline = 0
         errors = 0
@@ -31,7 +31,7 @@ def read(file):
         
         if currentline >= 1:
             print("Errors found in file: " + str(errors))
-        else:
+        elif boolean:
             print("No errors found in file.")
     return jetSL
 
@@ -41,7 +41,7 @@ def read(file):
 # Prints length of visible Unique Article
 # Prints length of hidden Article
 # Returns list of hidden articles, list of unique articles, list of duplicated articles
-def duplicates(jetSL):
+def duplicates(jetSL, boolean=False):
     doldArtik = []
     uArtik = []
     dArtik = []
@@ -73,7 +73,8 @@ def duplicates(jetSL):
     # Om den kommer till en rad som inte har ett värde i "Dölj produkt" så anger den värdet av det senaste "Dölj produkt" som den kommer ihåg.
 
     # prints the length of dArtik so that I can see how many unique duplicates there are.
-    print(f"length of synliga dupliceradeArtiklar: {len(dArtik)}\nlength of synliga unikaArtiklar: {len(uArtik)}\nlength of dolda artiklar: {len(doldArtik)}")
+    if boolean:
+        print(f"length of synliga dupliceradeArtiklar: {len(dArtik)}\nlength of synliga unikaArtiklar: {len(uArtik)}\nlength of dolda artiklar: {len(doldArtik)}")
     return doldArtik, uArtik, dArtik
 
 
