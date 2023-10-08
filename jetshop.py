@@ -10,6 +10,7 @@ Module for functions relating to jetshop
 def read(file):
     with open(file) as jetshop:
         currentline = 0
+        errors = 0
         jetSL = []
 
         for line in jetshop:
@@ -25,7 +26,13 @@ def read(file):
                 print("Failed to read Row " + str(currentline))
                 print("Expected 4 values with 3 instances of ';'")
                 print("Content: " + line)
+                errors += 1
             currentline += 1
+        
+        if currentline >= 1:
+            print("Errors found in file: " + str(errors))
+        else:
+            print("No errors found in file.")
     return jetSL
 
 
@@ -73,18 +80,27 @@ def duplicates(jetSL):
 
 ###WRITES A TXT FILE WITH THE OUTPUT ARTICLE IDs###
 # this is used for manually fixing the faulty artikelnummer in the website
-def write(doldArtik, uArtik, dArtik):
-    with open("/output/output.txt", "w") as txt:
-        for i in uArtik:
-            arg1 = ""
-            arg2 = ""
-            if i in dArtik:
-                arg1 = "DOUBLE"
-            if i in mismatch:
-                arg2 = "MISMATCH"
-            if arg1 or arg2:
-                txt.write(f"{i} --{arg1}{arg2}--\n")
+def write(doldArtik, uArtik, dArtik, argument):
+    if argument == "double":
+        doubles = 0
+        with open("dubblaArtiklar.txt", "w") as txt:
+            for i in uArtik:
+                arg1 = ""
+                arg2 = ""
+                if i in dArtik:
+                    arg1 = "DOUBLE"
+                    doubles += 1
+                """
+                Leftover from using this in tandem with visma to check for name mismatches
+                if i in mismatch:
+                    arg2 = "MISMATCH"
+                """
+                if arg1 or arg2:
+                    txt.write(f"{i} --{arg1}{arg2}--\n")
+        print(str(doubles) + " Duplicate articles are found in dubblaArtiklar.txt")
 
-    with open("doldaArtiklar.txt", "w") as txt:
-        for i in doldArtik:
-            txt.write(f"{i}\n")
+    if argument == "hidden":
+        with open("doldaArtiklar.txt", "w") as txt:
+            for i in doldArtik:
+                txt.write(f"{i}\n")
+        print(str(len(doldArtik)) + " Hidden articles are found in doldaArtiklar.txt")
