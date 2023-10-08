@@ -61,6 +61,8 @@ def main():
             jetshoplistlib = js.read(jetshopfile)
 
             js.write(js.duplicates(jetshoplistlib))
+        
+        input("Press enter to continue...")
 
 """
     # Creates the visma stuff
