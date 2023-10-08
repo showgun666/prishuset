@@ -28,11 +28,12 @@ def read(file):
             currentline += 1
     return jetSL
 
+
 # Goes through key artikelnummer in jetSL, adds unique values to uArtik and duplicate values to dArtik, men bara om artikeln inte är dold.
 # Prints length of visible Duplicated Article
 # Prints length of visible Unique Article
 # Prints length of hidden Article
-# Returns void
+# Returns list of hidden articles, list of unique articles, list of duplicated articles
 def duplicates(jetSL):
     doldArtik = []
     uArtik = []
@@ -66,4 +67,24 @@ def duplicates(jetSL):
 
     # prints the length of dArtik so that I can see how many unique duplicates there are.
     print(f"length of synliga dupliceradeArtiklar: {len(dArtik)}\nlength of synliga unikaArtiklar: {len(uArtik)}\nlength of dolda artiklar: {len(doldArtik)}")
-    
+    return doldArtik, uArtik, dArtik
+
+
+
+###WRITES A TXT FILE WITH THE OUTPUT ARTICLE IDs###
+# this is used for manually fixing the faulty artikelnummer in the website
+def write(doldArtik, uArtik, dArtik):
+    with open("/output/output.txt", "w") as txt:
+        for i in uArtik:
+            arg1 = ""
+            arg2 = ""
+            if i in dArtik:
+                arg1 = "DOUBLE"
+            if i in mismatch:
+                arg2 = "MISMATCH"
+            if arg1 or arg2:
+                txt.write(f"{i} --{arg1}{arg2}--\n")
+
+    with open("doldaArtiklar.txt", "w") as txt:
+        for i in doldArtik:
+            txt.write(f"{i}\n")
