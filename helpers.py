@@ -9,6 +9,8 @@ import sys
 # size is an integer, determines how far to round in whole numbers
 # return new rounded value
 def rounding(value, direction, size=1):
+    if value == 0:
+        return value
     rounded_value = value
 
     if direction == 'up':
@@ -32,7 +34,6 @@ def rounding(value, direction, size=1):
     else:
         print("Invalid direction: " + direction + "\nexiting program")
         sys.exit()
-    
 
     return rounded_value
 
