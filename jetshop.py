@@ -2,6 +2,7 @@
 Module for functions relating to jetshop
 """
 import helpers as h
+import math
 
 # creates the dictionary objects and appends them to the list jetSL after splitting it at the ";"
 # file == the file to be read and it is a jetshop file.
@@ -159,28 +160,50 @@ def newPrices(articleList, percentage):
 # oldfile string for name of .txt file with pre-change prices
 # newfile string for name of .txt file with post-change prices
 # 
-def logResults(oldFile, newFile):
+def logResults(oldFile, newFile, percentage):
     masterString = ""
-
-    dicModel = {
-        "Artikelnummer": "",
-        "Produktnamn": "",
-        "Före Pris exkl. moms": 0.00,
-        "Efter Pris exkl. moms": 0.00,
-        "Prisskillnad kronor": 0.00,
-        "Prisskillnad procent": 0.00,
-        "Differens prishöjning procent": 0.00,
-        
-    }
     listDic = []
+    perc = float(percentage)
 
-    with open(oldFile, "r") as old:
-        ...
-    with open(newFile, "r") as new:
-        ...
+    with open(oldFile, "r") as old, open(newFile, "r") as new, open("dokumentation.txt", "w") as documentation:
+        # Add values of old file to list of dictionaries
+        for line in old:
+            artn, prodna, prisex, dold = line.split(";")
+            listDic.append({
+                "Artikelnummer" : artn.strip(),
+                "Produktnamn" : prodna.strip(),
+                "Före Pris exkl. moms" : prisex.strip().replace(",", "."),
+            })
 
-        
+        # Add values of new file to list of dictionaries
+        row = 0
+        for line in new:
+            # Skipping headers
+            if row == 0:
+                listDic[row]["Efter Pris exkl. moms"] = "Efter Pris exkl. moms"
+                listDic[row]["Prisskillnad kronor"] = "Prisskillnad kronor"
+                listDic[row]["Prisskillnad procent"] = "Prisskillnad procent"
+                row += 1
+                continue
 
+            artn, prodna, prisex, dold = line.split(";")
+            priceDiff = float(prisex.replace(",", ".")) - float(listDic[row]["Före Pris exkl. moms"].replace(",", "."))
+            if float(listDic[row]["Före Pris exkl. moms"]) > 0:
+                priceDiffPercent = float(prisex.replace(",", ".")) / float(listDic[row]["Före Pris exkl. moms"].replace(",", "."))
+            else:
+                priceDiffPercent = 0
+
+            listDic[row]["Efter Pris exkl. moms"] = prisex.strip().replace(",", ".")
+            listDic[row]["Prisskillnad kronor"] = priceDiff
+            listDic[row]["Prisskillnad procent"] = priceDiffPercent
+            row += 1
+
+        # Summarize the results in dokumentation.txt file
+        for i in range(len(listDic)):
+            for key, value in listDic[i].items():
+                masterString += str(value) + ";"
+            masterString = masterString[:-1] + "\n"
+        documentation.write(masterString)
 
 """
 What we want to log for every article:
