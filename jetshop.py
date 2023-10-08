@@ -139,15 +139,46 @@ def pricing(currentPrice, percentage):
 
 def newPrices(articleList, percentage):
     masterString = ""
+    try:
+        percentage = float(percentage)
+    except:
+        print("invalid percentage value. Make sure you have a valid percentage")
+        return
+    
     for i in range(len(articleList)):
-        # First row we want the headers
-        if i == 0:
-            for key, _ in articleList[i].items():
-                masterString += key + ";"
-            masterString = masterString[:-1]
+        for key, value in articleList[i].items():
+            if key == "Pris exkl. moms" and value != key:
+                masterString += str(pricing(float(value), percentage)[1]).replace(".", ",") + ";"
+            else:
+                masterString += value + ";"
+        masterString = masterString[:-1] + "\n"
     
     with open("OUTPUT_RENAME_ME.txt", "w") as output:
         output.write(masterString)
+
+# oldfile string for name of .txt file with pre-change prices
+# newfile string for name of .txt file with post-change prices
+# 
+def logResults(oldFile, newFile):
+    masterString = ""
+
+    dicModel = {
+        "Artikelnummer": "",
+        "Produktnamn": "",
+        "Före Pris exkl. moms": 0.00,
+        "Efter Pris exkl. moms": 0.00,
+        "Prisskillnad kronor": 0.00,
+        "Prisskillnad procent": 0.00,
+        "Differens prishöjning procent": 0.00,
+        
+    }
+    listDic = []
+
+    with open(oldFile, "r") as old:
+        ...
+    with open(newFile, "r") as new:
+        ...
+
         
 
 
