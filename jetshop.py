@@ -81,6 +81,7 @@ def duplicates(jetSL, message=False):
 
 ###WRITES A TXT FILE WITH THE OUTPUT ARTICLE IDs###
 # this is used for manually fixing the faulty artikelnummer in the website
+# Uses argument "double" and "hidden" to determine which files should be written
 def write(doldArtik, uArtik, dArtik, argument):
     if argument == "double":
         doubles = 0
@@ -92,7 +93,7 @@ def write(doldArtik, uArtik, dArtik, argument):
                     arg1 = "DOUBLE"
                     doubles += 1
                 """
-                Leftover from using this in tandem with visma to check for name mismatches
+                # Leftover from using this in tandem with visma to check for name mismatches
                 if i in mismatch:
                     arg2 = "MISMATCH"
                 """
@@ -105,3 +106,19 @@ def write(doldArtik, uArtik, dArtik, argument):
             for i in doldArtik:
                 txt.write(f"{i}\n")
         print(str(len(doldArtik)) + " Hidden articles are found in doldaArtiklar.txt")
+
+# Procenthöjning av produkter enligt boss
+def pricing():
+    increase = 1.11
+    range1 = 199
+    range2 = 999
+
+    range1round = 1
+    range1rounddir = "up"
+
+    range2round = 5
+    range2rounddir = "nearest"
+
+    range3round = 10
+    range3rounddir = "nearest"
+
