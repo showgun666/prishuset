@@ -204,13 +204,3 @@ def logResults(oldFile, newFile, percentage):
                 masterString += str(value) + ";"
             masterString = masterString[:-1] + "\n"
         documentation.write(masterString)
-
-"""
-What we want to log for every article:
-before price
-after price
-price difference in kronor
-price difference in percentage
-accuracy to the percentage increase
-"""
-
