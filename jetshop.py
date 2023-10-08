@@ -99,7 +99,8 @@ def write(doldArtik, uArtik, dArtik, argument):
                     arg2 = "MISMATCH"
                 """
                 if arg1 or arg2:
-                    txt.write(f"{i} --{arg1}{arg2}--\n")
+                    # txt.write(f"{i} --{arg1}{arg2}--\n")
+                    txt.write(f"{i}\n")
         print(str(doubles) + " Duplicate articles are found in dubblaArtiklar.txt")
 
     if argument == "hidden":
@@ -137,10 +138,17 @@ def pricing(currentPrice, percentage):
     return [newPrice, newPrice / tax]
 
 def newPrices(articleList, percentage):
+    masterString = ""
+    for i in range(len(articleList)):
+        # First row we want the headers
+        if i == 0:
+            for key, _ in articleList[i].items():
+                masterString += key + ";"
+            masterString = masterString[:-1]
+    
     with open("OUTPUT_RENAME_ME.txt", "w") as output:
-        for i in range(len(articleList)):
-            if i == 0:
-
+        output.write(masterString)
+        
 
 
 """
