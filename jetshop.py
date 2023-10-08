@@ -1,7 +1,7 @@
 """
 Module for functions relating to jetshop
 """
-
+import helpers as h
 
 # creates the dictionary objects and appends them to the list jetSL after splitting it at the ";"
 # file == the file to be read and it is a jetshop file.
@@ -108,17 +108,29 @@ def write(doldArtik, uArtik, dArtik, argument):
         print(str(len(doldArtik)) + " Hidden articles are found in doldaArtiklar.txt")
 
 # Procenthöjning av produkter enligt boss
-def pricing():
-    increase = 1.11
+# float or int currentPrice
+# float percentage, percentage to increase price as 1.10 for 10% increase
+# return list new price of product in ink moms and new price in ex moms format
+def pricing(currentPrice, percentage):
+    tax = 1.25
+    increasedPrice = currentPrice * percentage * tax
+    # Prices up to this amount
     range1 = 199
-    range2 = 999
-
     range1round = 1
     range1rounddir = "up"
-
+    # Prices up to this amount
+    range2 = 999
     range2round = 5
     range2rounddir = "nearest"
-
+    # Then the rest of the prices
     range3round = 10
     range3rounddir = "nearest"
 
+    if increasedPrice <= range1:
+        newPrice = h.rounding(increasedPrice, range1rounddir, range1round)
+    elif increasedPrice <= range2:
+        newPrice = h.rounding(increasedPrice, range2rounddir, range2round)
+    else:
+        newPrice = h.rounding(increasedPrice, range3rounddir, range3round)
+
+    return [newPrice, newPrice / tax]
