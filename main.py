@@ -62,6 +62,7 @@ def main():
 
             js.write(js.duplicates(jetshoplistlib))
 
+"""
     # Creates the visma stuff
     with open("prislistavisma1.txt") as visma:
         for line in visma :
@@ -73,7 +74,7 @@ def main():
                 "Artikelnummer" : vart.strip(),
                 "Pris exkl. moms" : vprice.strip(),
             })
-
+"""
     # Jag vill jämföra artikelnummer i visma med artikelnummer bland de unika artikelnumren i jetshop. Om ett artikelnummer i jetshop INTE finns i visma, så måste den korrigeras
     # Sedan vill jag jämföra priserna i visma med priserna i jetshop. Jag vill ha priset på allt som inte är exakt samma. Kan börja med allt som är billigare i visma än i jetshop.
 
