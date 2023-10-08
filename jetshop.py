@@ -172,7 +172,7 @@ def logResults(oldFile, newFile, percentage):
             listDic.append({
                 "Artikelnummer" : artn.strip(),
                 "Produktnamn" : prodna.strip(),
-                "Före Pris exkl. moms" : prisex.strip().replace(",", "."),
+                "Före Pris exkl. moms" : prisex.strip(),
             })
 
         # Add values of new file to list of dictionaries
@@ -188,14 +188,14 @@ def logResults(oldFile, newFile, percentage):
 
             artn, prodna, prisex, dold = line.split(";")
             priceDiff = float(prisex.replace(",", ".")) - float(listDic[row]["Före Pris exkl. moms"].replace(",", "."))
-            if float(listDic[row]["Före Pris exkl. moms"]) > 0:
+            if float(listDic[row]["Före Pris exkl. moms"].replace(",", ".")) > 0:
                 priceDiffPercent = float(prisex.replace(",", ".")) / float(listDic[row]["Före Pris exkl. moms"].replace(",", "."))
             else:
                 priceDiffPercent = 0
 
-            listDic[row]["Efter Pris exkl. moms"] = prisex.strip().replace(",", ".")
-            listDic[row]["Prisskillnad kronor"] = priceDiff
-            listDic[row]["Prisskillnad procent"] = priceDiffPercent
+            listDic[row]["Efter Pris exkl. moms"] = prisex.strip()
+            listDic[row]["Prisskillnad kronor"] = str(priceDiff).replace(".", ",")
+            listDic[row]["Prisskillnad procent"] = str(priceDiffPercent).replace(".", ",")
             row += 1
 
         # Summarize the results in dokumentation.txt file
