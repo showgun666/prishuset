@@ -6,6 +6,7 @@ import helpers as h
 # creates the dictionary objects and appends them to the list jetSL after splitting it at the ";"
 # file == the file to be read and it is a jetshop file.
 # Checks that the file is in correct format
+# Corrects comma separated floats into point separated floats
 # returns list of libraries with contents from txt file
 def read(file, message=False):
     with open(file) as jetshop:
@@ -19,7 +20,7 @@ def read(file, message=False):
                 jetSL.append({
                     "Artikelnummer" : artn.strip(),
                     "Produktnamn" : prodna.strip(),
-                    "Pris exkl. moms" : prisex.strip(),
+                    "Pris exkl. moms" : prisex.strip().replace(",", "."),
                     "Dölj produkt" : dold.strip(),
                 })
             except:
@@ -134,3 +135,20 @@ def pricing(currentPrice, percentage):
         newPrice = h.rounding(increasedPrice, range3rounddir, range3round)
 
     return [newPrice, newPrice / tax]
+
+def newPrices(articleList, percentage):
+    with open("OUTPUT_RENAME_ME.txt", "w") as output:
+        for i in range(len(articleList)):
+            if i == 0:
+
+
+
+"""
+What we want to log for every article:
+before price
+after price
+price difference in kronor
+price difference in percentage
+accuracy to the percentage increase
+"""
+
