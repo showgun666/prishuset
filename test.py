@@ -17,7 +17,9 @@ def test_roundNearest():
     a1 = h.roundNearest(126.0) # 126
     a2 = h.roundNearest(126) # 126
 
-    assert a == 123 and b == 124 and c == 124 and d == 123 and e == 126 and x == 126 and y == 127 and z == 127 and a1 == 126 and a2 == 126
+    ab = h.roundNearest(0.00) # 0
+
+    assert a == 123 and b == 124 and c == 124 and d == 123 and e == 126 and x == 126 and y == 127 and z == 127 and a1 == 126 and a2 == 126 and ab == 0
 
 def test_rounding():
     a = h.rounding(14, "nearest", 1) # 14
@@ -39,7 +41,10 @@ def test_rounding():
     be = h.rounding(1439.754, "nearest", 10) # 1440
     bf = h.rounding(123456789, "nearest", 10) # 123456790
 
-    assert a == 14 and b == 14 and c == 15 and ab == 145 and ac == 145 and ad == 140 and ae == 145 and af == 10 and ah == 145 and ai == 150 and ba == 1000 and bb == 995 and bc == 1000 and bd == 1010 and be == 1440 and bf == 123456790
+    abb = h.rounding(0.00, "up", 1) # 0
+    abc = h.rounding(0.00, "down", 1) # 0
+
+    assert abc == 0 and abb == 0 and a == 14 and b == 14 and c == 15 and ab == 145 and ac == 145 and ad == 140 and ae == 145 and af == 10 and ah == 145 and ai == 150 and ba == 1000 and bb == 995 and bc == 1000 and bd == 1010 and be == 1440 and bf == 123456790
 
 def test_pricing():
     a = j.pricing(10.4, 1.11)[0] # 15
@@ -54,4 +59,6 @@ def test_pricing():
     ad = j.pricing(555.555, 1.11)[0] # 770
     ae = j.pricing(444.444, 1.11)[0] # 615
 
-    assert a == 15 and b == 7 and c == 2 and d == 190 and e == 265 and aa == 355 and ab == 795 and ac == 1390 and ad == 770 and ae == 615
+    bb = j.pricing(0.00, 1.11)[0] # 0
+
+    assert bb == 0 and a == 15 and b == 7 and c == 2 and d == 190 and e == 265 and aa == 355 and ab == 795 and ac == 1390 and ad == 770 and ae == 615
