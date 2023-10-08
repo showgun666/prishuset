@@ -26,16 +26,8 @@ def commands():
     ...
 
 def main():
-    #JetShop List prepped
-    jetSL = []
     #Visma list prepped
     vismaL = []
-    #list to hold unique artikelnummer
-    uArtik = []
-    #list to hold duplicate artikelnummer
-    dArtik = []
-    #list to hold dolda artikelnummer
-    doldArtik = []
     #list to hold mismatches where the article number in jetshop doesn't exist in the article number list for visma
     mismatch = []
     #list to hold old jetshop
@@ -47,6 +39,7 @@ def main():
     while True:
         print("1) Read jetshop.txt and print errors")
         print("2) Check jetshop.txt for duplicate artikelnummer")
+        print("3) Write files for hidden articles and duplicate articles")
         print("q) Quit program")
 
         choice = input("-->")
@@ -57,12 +50,17 @@ def main():
 
         if choice == "1":
             # List of libraries from jetshop.txt to jetSL
-            jetSL = js.read(jetshopfile)
+            js.read(jetshopfile)
 
         if choice == "2":
             # Read file and check for duplicates
-            jetSL = js.read(jetshopfile)
-            js.duplicates(jetSL)
+            js.duplicates(js.read(jetshopfile))
+
+        if choice == "3":
+            # Write
+            jetshoplistlib = js.read(jetshopfile)
+
+            js.write(js.duplicates(jetshoplistlib))
 
     # Creates the visma stuff
     with open("prislistavisma1.txt") as visma:
@@ -87,7 +85,7 @@ def main():
 
 ### Måste skära bort första A-et från artikelnumret på alla visma artikelnummer.
 
-    for n in range(len(uArtik)):
+"""    for n in range(len(uArtik)):
         match = False
         for i in range(len(vismaL)):
             if uArtik[n] == vismaL[i]["Artikelnummer"]:
@@ -110,7 +108,7 @@ def main():
                 continue
             #append the mismatch to the mismatch list
             #mismatch.append(uArtik[n])
-
+"""
     # WHAT DO NU, ok så ::
     # VAD BEHÖVER JAG???
     # 1. vilka produkter som är dubletter i jetshop
@@ -130,25 +128,6 @@ def main():
     # Med det så går jag igenom allt i mismatch listan och allt i dup listan, om det är en träff på antingen eller så printar vi, annars gör vi ingenting.
 
     # Senare kan jag lösa om priset i visma stämmer eller inte, nu jobbar vi i enbart jetshop
-
-
-    ###WRITES A TXT FILE WITH THE OUTPUT ARTICLE IDs###
-    # this is used for manually fixing the faulty artikelnummer in the website
-
-    with open("output.txt", "w") as txt:
-        for i in uArtik:
-            arg1 = ""
-            arg2 = ""
-            if i in dArtik:
-                arg1 = "DOUBLE"
-            if i in mismatch:
-                arg2 = "MISMATCH"
-            if arg1 or arg2:
-                txt.write(f"{i} --{arg1}{arg2}--\n")
-
-    with open("doldaArtiklar.txt", "w") as txt:
-        for i in doldArtik:
-            txt.write(f"{i}\n")
 
 """
 So I kind of wanted to figure out what articles have been deleted, but I don't think that that will work because I've changed the names of pretty much
