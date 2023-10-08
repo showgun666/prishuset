@@ -39,7 +39,8 @@ def main():
     while True:
         print("1) Read jetshop.txt and print errors")
         print("2) Check jetshop.txt for duplicate artikelnummer")
-        print("3) Write files for hidden articles and duplicate articles")
+        print("3) Write files for hidden articles")
+        print("4) Write files for duplicate articles")
         print("q) Quit program")
 
         choice = input("-->")
@@ -57,10 +58,18 @@ def main():
             js.duplicates(js.read(jetshopfile))
 
         if choice == "3":
-            # Write
+            # Write hidden files
             jetshoplistlib = js.read(jetshopfile)
+            dold, unik, dupl = js.duplicates(jetshoplistlib)
 
-            js.write(js.duplicates(jetshoplistlib))
+            js.write(dold, unik, dupl, "hidden")
+
+        if choice == "4":
+            # Write hidden files
+            jetshoplistlib = js.read(jetshopfile)
+            dold, unik, dupl = js.duplicates(jetshoplistlib)
+
+            js.write(dold, unik, dupl, "double")
         
         input("Press enter to continue...")
 
