@@ -41,6 +41,7 @@ def main():
         print("2) Check jetshop.txt for duplicate artikelnummer")
         print("3) Write files for hidden articles")
         print("4) Write files for duplicate articles")
+        print("5) Write a semicolon separated txt file for jetshop with new prices")
         print("q) Quit program")
 
         choice = input("-->")
@@ -59,18 +60,23 @@ def main():
 
         if choice == "3":
             # Write hidden files
-            jetshoplistlib = js.read(jetshopfile)
-            dold, unik, dupl = js.duplicates(jetshoplistlib)
+            jetshoplistdic = js.read(jetshopfile)
+            dold, unik, dupl = js.duplicates(jetshoplistdic)
 
             js.write(dold, unik, dupl, "hidden")
 
         if choice == "4":
             # Write hidden files
-            jetshoplistlib = js.read(jetshopfile)
-            dold, unik, dupl = js.duplicates(jetshoplistlib)
+            jetshoplistdic = js.read(jetshopfile)
+            dold, unik, dupl = js.duplicates(jetshoplistdic)
 
             js.write(dold, unik, dupl, "double")
         
+        if choice == "5":
+            # Write a new ouput file with new prices
+            jetshoplistdic = js.read(jetshopfile)
+            js.newPrices(jetshoplistdic, input("Percentage in decimal format to increase as in 11% would be 1.11.\nInput: "))
+
         input("Press enter to continue...")
 
 """
