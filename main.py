@@ -74,8 +74,12 @@ def main():
         
         if choice == "5":
             # Write a new ouput file with new prices
+            percentage = input("Percentage in decimal format to increase as in 11% would be 1.11.\nInput: ")
+
             jetshoplistdic = js.read(jetshopfile)
-            js.newPrices(jetshoplistdic, input("Percentage in decimal format to increase as in 11% would be 1.11.\nInput: "))
+            js.newPrices(jetshoplistdic, percentage)
+            # Write dokumentation for everything
+            js.logResults(jetshopfile, "OUTPUT_RENAME_ME.txt", percentage)
 
         input("Press enter to continue...")
 
