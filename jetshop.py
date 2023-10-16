@@ -22,10 +22,9 @@ def read(file, message=False):
             # Establish headers
             if row < 1 :
                 try:
-                    for line in jetshop:
-                        headers = line.split(";")
-                        for title in headers:
-                            jetSL[row][title] = title
+                    headers = line.split(";")
+                    for title in range(len(headers)):
+                        jetSL[row][title] = title
                 except:
                     print("Could not split headers from file in first row.\n")
             else:
