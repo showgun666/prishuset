@@ -39,6 +39,37 @@ PG42208G och PG42206G pris ojusterat
 
 
 VISMA
-+46470706200
++46470 706 200
 orgnr prishuset 556514-6056
 
+artiklar lager prisinläsning
+se dokumentation
+
+https://www.vismaspcs.se/visma-support/visma-administration-2000/content/online-help/prisinlasning.htm
+
+För Paketlösningar och inläsning i lager, prata med jetshop om integrationen med visma.
+
+Planerat Jobb:
+
+Lösning per kategori
+Inklusive Kategori : Alla produkter som tillhör en viss kategori
+Exklusive Kategori : Alla produkter som inte tillhör en viss kategori
+Inklusive + Exklusive Kategori : Alla produkter som tillhör en viss kategori och inte tillhör en annan kategori
+
+Prisuppdateringshistorik
+Ett samlingsdokument där alla produkter som blivit uppdaterade läggs till rad för rad.
+
+Produktkategorier och ID
+
+TO DO
+Programmet ska kunna hantera olika mängd argument i dokumentet. Om det finns dölj artikel eller ej eller ej.
+Produktkategorier eller ej.
+
+Förmåga att sortera per kategori(Eller annat värde) så att endast vissa produkter uppdateras.
+Sortering kan ske inklusive och/eller inklusive
+
+En historikfil som går att använda för att ha koll på uppdateringar osv.
+
+Förmåga att uppdatera priser med och utan gravyr separat.
+
+Bättre support i menyn så att det går att se alla val man har gjort och vad som kommer göras
