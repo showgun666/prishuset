@@ -25,9 +25,7 @@ def read(file, message=False):
                     for line in jetshop:
                         headers = line.split(";")
                         for title in headers:
-                            jetSL[row] {
-                                title : title,
-                            }
+                            jetSL[row][title] = title
                 except:
                     print("Could not split headers from file in first row.\n")
             else:
@@ -35,9 +33,7 @@ def read(file, message=False):
                     for i in range(len(rowAttributes)):
                         rowAttributes = line.split(";")
                         for title in headers:
-                            jetSL[row] {
-                                title : rowAttributes[i],
-                            }
+                            jetSL[row][title] = rowAttributes[i]
                 except:
                     print("Failed to read Row " + str(row))
                     print("Expected 4 values with 3 instances of ';'")
