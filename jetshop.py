@@ -36,7 +36,7 @@ def read(file, message=False):
                         rowAttributes = line.split(";")
                         for title in headers:
                             jetSL[row] {
-                                title : title,
+                                title : rowAttributes[i],
                             }
                 except:
                     print("Failed to read Row " + str(row))
