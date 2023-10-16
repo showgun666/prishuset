@@ -11,27 +11,41 @@ import math
 # returns list of libraries with contents from txt file
 def read(file, message=False):
     with open(file) as jetshop:
-        currentline = 0
+        row = 0
         errors = 0
         jetSL = []
+        headers = []
 
         for line in jetshop:
-            try:
-                artn, prodna, prisex, dold = line.split(";")
-                jetSL.append({
-                    "Artikelnummer" : artn.strip(),
-                    "Produktnamn" : prodna.strip(),
-                    "Pris exkl. moms" : prisex.strip().replace(",", "."),
-                    "Dölj produkt" : dold.strip(),
-                })
-            except:
-                print("Failed to read Row " + str(currentline))
-                print("Expected 4 values with 3 instances of ';'")
-                print("Content: " + line)
-                errors += 1
-            currentline += 1
+            rowAttributes = []
+
+            # Establish headers
+            if row < 1 :
+                try:
+                    for line in jetshop:
+                        headers = line.split(";")
+                        for title in headers:
+                            jetSL[row] {
+                                title : title,
+                            }
+                except:
+                    print("Could not split headers from file in first row.\n")
+            else:
+                try:
+                    for i in range(len(rowAttributes)):
+                        rowAttributes = line.split(";")
+                        for title in headers:
+                            jetSL[row] {
+                                title : title,
+                            }
+                except:
+                    print("Failed to read Row " + str(row))
+                    print("Expected 4 values with 3 instances of ';'")
+                    print("Content: " + line)
+                    errors += 1
+            row += 1
         
-        if currentline >= 1:
+        if errors >= 1:
             print("Errors found in file: " + str(errors))
         elif message:
             print("No errors found in file.")
