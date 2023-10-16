@@ -68,6 +68,9 @@ def duplicates(jetSL, message=False):
             memdold = int(jetSL[i]["Dölj produkt"])
         except:
             jetSL[i]["Dölj produkt"] = memdold
+            print("Could not check for hidden product... Is row in document?\nExiting.")
+            exit()
+
 
         # Go through each artikelnummer value, if it's Dölj Produkt value is 1 then stove it away in doldArtik. We don't want to see it.
         # If the artikelnummer value is not in the list of unique artikelnummer values, put it in there.
