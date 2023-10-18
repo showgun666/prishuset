@@ -79,7 +79,7 @@ def main():
             jetshoplistdic = js.read(jetshopfile)
             js.newPrices(jetshoplistdic, percentage)
             # Write dokumentation for everything
-            js.logResults(jetshopfile, "OUTPUT_RENAME_ME.txt", percentage)
+            js.logResults(jetshoplistdic, js.read("OUTPUT_RENAME_ME.txt"), percentage)
 
         input("Press enter to continue...")
 
