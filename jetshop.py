@@ -11,39 +11,54 @@ import math
 # returns list of libraries with contents from txt file
 def read(file, message=False):
     with open(file) as jetshop:
+        # Row being read in the document
         row = 0
+        # Errors found during reading of the file. For debugging.
         errors = 0
+        # A list of dictionaries containing the product information where every index is one product
         jetSL = []
+        # Every header in the document
         headers = []
 
+        # Establish headers
         for line in jetshop:
-            rowAttributes = []
-
-            # Establish headers
-            if row < 1 :
+            # Add a dictionary item into jetSL
+            jetSL.append({})
+            if row == 0:
                 try:
                     headers = line.split(";")
                     for title in range(len(headers)):
-                        jetSL[row][title] = title
+                        jetSL[row][headers[title]] = headers[title]
                 except:
                     print("Could not split headers from file in first row.\n")
             else:
-                try:
-                    for i in range(len(rowAttributes)):
-                        rowAttributes = line.split(";")
-                        for title in headers:
-                            jetSL[row][title] = rowAttributes[i]
-                except:
-                    print("Failed to read Row " + str(row))
-                    print("Expected 4 values with 3 instances of ';'")
-                    print("Content: " + line)
-                    errors += 1
+                break
+            row +=1
+
+        # Start Reading the file line by line
+        for line in jetshop:
+            # Add a dictionary item into jetSL
+            jetSL.append({})
+            # For every line we save all the row attributes in this file. Same order as headers.
+            rowAttributes = line.split(";")
+            try:
+                # For every index in headers
+                for title in range(len(headers)):
+                    # We insert a value into jetSL list on the row index with every value for the headers, also replace commas with dots.
+                    jetSL[row][headers[title]] = rowAttributes[title].replace(',', '.')
+            except:
+                print("Failed to read Row " + str(row))
+                print("Content: " + line)
+                errors += 1
             row += 1
         
         if errors >= 1:
             print("Errors found in file: " + str(errors))
         elif message:
             print("No errors found in file.")
+        # Remove empty dictionaries.
+        while not bool(jetSL[-1]):
+            jetSL.pop()
     return jetSL
 
 
@@ -62,15 +77,12 @@ def duplicates(jetSL, message=False):
         if i == 0:
             continue
 
-        # Go through each line, if it has a value in key "Dölj produkt", save that value in memdold. if it doesn't, set the value in that key to whatever is in memdold.
+        # Go through each line, if it has a value in key "Dölj produkt", save that value in memdold. if it doesn't, set the value in that key to 0.
         # I have no idea what this is or what it is supposed to do.
         try:
             memdold = int(jetSL[i]["Dölj produkt"])
         except:
-            jetSL[i]["Dölj produkt"] = memdold
-            print("Could not check for hidden product... Is row in document?\nExiting.")
-            exit()
-
+            jetSL[i]["Dölj produkt"] = 0
 
         # Go through each artikelnummer value, if it's Dölj Produkt value is 1 then stove it away in doldArtik. We don't want to see it.
         # If the artikelnummer value is not in the list of unique artikelnummer values, put it in there.
@@ -157,39 +169,42 @@ def newPrices(articleList, percentage):
     except:
         print("invalid percentage value. Make sure you have a valid percentage")
         return
-    
-    for i in range(len(articleList)):
-        for key, value in articleList[i].items():
-            if key == "Pris exkl. moms" and value != key:
-                masterString += str(pricing(float(value), percentage)[1]).replace(".", ",") + ";"
-            else:
-                masterString += value + ";"
-        masterString = masterString[:-1] + "\n"
+
+    try:
+        for i in range(len(articleList)):
+            for key, value in articleList[i].items():
+                if key == "Pris exkl. moms" and value != key:
+                    masterString += str(pricing(float(value), percentage)[1]).replace(".", ",") + ";"
+                else:
+                    masterString += value + ";"
+            masterString = masterString[:-1]
+    except:
+        print("Error! Could not check key 'Pris exkl. moms' during pricing.\nExiting.")
+        exit()
     
     with open("OUTPUT_RENAME_ME.txt", "w") as output:
         output.write(masterString)
 
-# oldfile string for name of .txt file with pre-change prices
-# newfile string for name of .txt file with post-change prices
+# listdic list of dictionaries from pre .txt file with pre-change prices
+# listdic list of dictionaries from post .txt file with post-change prices
 # 
-def logResults(oldFile, newFile, percentage):
+def logResults(listdic, newlistdic, percentage):
     masterString = ""
     listDic = []
     perc = float(percentage)
 
-    with open(oldFile, "r") as old, open(newFile, "r") as new, open("dokumentation.txt", "w") as documentation:
-        # Add values of old file to list of dictionaries
-        for line in old:
-            artn, prodna, prisex, dold = line.split(";")
-            listDic.append({
-                "Artikelnummer" : artn.strip(),
-                "Produktnamn" : prodna.strip(),
-                "Före Pris exkl. moms" : prisex.strip(),
-            })
+    # Add values of listdic to list of dictionaries
+    for i in listdic:
+        listDic.append({
+            "Artikelnummer" : i["Artikelnummer"].strip(),
+            "Produktnamn" : i["Produktnamn"].strip(),
+            "Före Pris exkl. moms" : i["Pris exkl. moms"].strip(),
+        })
 
+    with open("dokumentation.txt", "w") as documentation:
         # Add values of new file to list of dictionaries
         row = 0
-        for line in new:
+        for i in newlistdic:
             # Skipping headers
             if row == 0:
                 listDic[row]["Efter Pris exkl. moms"] = "Efter Pris exkl. moms"
@@ -198,7 +213,7 @@ def logResults(oldFile, newFile, percentage):
                 row += 1
                 continue
 
-            artn, prodna, prisex, dold = line.split(";")
+            prisex = i["Pris exkl. moms"].strip()
             priceDiff = float(prisex.replace(",", ".")) - float(listDic[row]["Före Pris exkl. moms"].replace(",", "."))
             if float(listDic[row]["Före Pris exkl. moms"].replace(",", ".")) > 0:
                 priceDiffPercent = float(prisex.replace(",", ".")) / float(listDic[row]["Före Pris exkl. moms"].replace(",", "."))
