@@ -21,19 +21,8 @@ def read(file, message=False):
         headers = []
 
         # Establish headers
-        for line in jetshop:
-            # Add a dictionary item into jetSL
-            jetSL.append({})
-            if row == 0:
-                try:
-                    headers = line.split(";")
-                    for title in range(len(headers)):
-                        jetSL[row][headers[title]] = headers[title]
-                except:
-                    print("Could not split headers from file in first row.\n")
-            else:
-                break
-            row +=1
+        for title in range(len(getCategories(file))):
+            jetSL[row][headers[title]] = headers[title]
 
         # Start Reading the file line by line
         for line in jetshop:
@@ -231,3 +220,24 @@ def logResults(listdic, newlistdic, percentage):
                 masterString += str(value) + ";"
             masterString = masterString[:-1] + "\n"
         documentation.write(masterString)
+
+# file argument is txt file
+# Returns list of categories in file
+def getCategories(file):
+    with open(file, "r") as jetshop:
+        # Every header in the document
+        headers = []
+        # Row being read in the document
+        row = 0
+
+        # Establish headers
+        for line in jetshop:
+            # Add a dictionary item into categories
+            if row == 0:
+                try:
+                    headers = line.split(";")
+                except:
+                    print("Could not split headers from file in first row.\n")
+            else:
+                return headers
+            row +=1
