@@ -241,3 +241,36 @@ def getCategories(file):
             else:
                 return headers
             row +=1
+
+# returns selected categories
+def selectCategories(categories):
+    selected = []
+
+    while True:
+        index = 0
+        for i in categories:
+            if i in selected:
+                print(str(index) + ". " + str(i) + " SELECTED")
+            else:
+                print(str(index) + ". " + str(i))
+            index += 1
+
+        selection = input("Select a category by typing related number and pressing enter. \nWhen done, input 'done'\n")
+        if selection == "done":
+            print("Categories selected:")
+            for i in selected:
+                print(i)
+            return selected
+        else:
+            selection = int(selection)
+
+        if isinstance(selection, str):
+            selection = int(selection)
+
+        if categories[selection] in selected:
+            print("Removing " + categories[selection] + " from list.\n")
+            selected.remove(categories[selection])
+        else:
+            print("Adding " + categories[selection] + " to list.\n")
+            selected.append(categories[selection])
+        print(selected)
