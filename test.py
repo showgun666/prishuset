@@ -62,3 +62,17 @@ def test_pricing():
     bb = j.pricing(0.00, 1.11)[0] # 0
 
     assert bb == 0 and a == 15 and b == 7 and c == 2 and d == 190 and e == 265 and aa == 355 and ab == 795 and ac == 1390 and ad == 770 and ae == 615
+
+def test_extractCatIDs():
+    headers = ["Artikelnummer", "Produktnamn", "KategoriID", "MetaKeywords"]
+    dataColumn1 = ["00000200", "Silverfärgad laserskylt som måttbeställes", "293", ""]
+    dataColumn2 = ["530", "Pokal St Annes Claret", "227", "253", ""]
+    dataColumn3 = ["ACV1-1", "", "", ""]
+    dataColumn4 = ["PBD112B01.strk1", "Medalj Löpning 50mm", "187", "211", "245", ""]
+
+    test1 = h.extractCategoryIDs(headers, dataColumn1)
+    test2 = h.extractCategoryIDs(headers, dataColumn2)
+    test3 = h.extractCategoryIDs(headers, dataColumn3)
+    test4 = h.extractCategoryIDs(headers, dataColumn4)
+
+    assert test1[0] == "293" and test2[0] == "227" and test2[1] == "253" and test3[0] == "" and test4[0] == "187" and test4[1] == "211" and test4[2] == "245" 
