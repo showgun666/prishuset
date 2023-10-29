@@ -69,10 +69,21 @@ def test_extractCatIDs():
     dataColumn2 = ["530", "Pokal St Annes Claret", "227", "253", ""]
     dataColumn3 = ["ACV1-1", "", "", ""]
     dataColumn4 = ["PBD112B01.strk1", "Medalj Löpning 50mm", "187", "211", "245", ""]
+    dataColumn5 = ['WINDSURFSILVER.attr1', '', '', '']
 
-    test1 = h.extractCategoryIDs(headers, dataColumn1)
-    test2 = h.extractCategoryIDs(headers, dataColumn2)
-    test3 = h.extractCategoryIDs(headers, dataColumn3)
-    test4 = h.extractCategoryIDs(headers, dataColumn4)
+    test1 = j.extractCategoryIDs(headers, dataColumn1)
+    test2 = j.extractCategoryIDs(headers, dataColumn2)
+    test3 = j.extractCategoryIDs(headers, dataColumn3)
+    test4 = j.extractCategoryIDs(headers, dataColumn4)
+    test5 = j.extractCategoryIDs(headers, dataColumn5)
 
-    assert test1[0] == "293" and test2[0] == "227" and test2[1] == "253" and test3[0] == "" and test4[0] == "187" and test4[1] == "211" and test4[2] == "245" 
+    assert test1[0] == ["293"] and test2[0] == ["227", "253"] and test3[0] == [""] and test4[0] == ["187", "211", "245"] and test5[0] == [""]
+
+def test_categoryStringToIDs():
+    categories1 = ["Friidrott, Löpning"]
+    categories2 = ["Friidrott, Löpning", "Övrigt", "Medaljer Präglade"]
+
+    test1 = j.categoryStringToIDs(categories1)
+    test2 = j.categoryStringToIDs(categories2)
+
+    assert test1 == ["187"] and test2 == ["187", "211", "245"]

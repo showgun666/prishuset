@@ -3,51 +3,98 @@ Module for functions relating to jetshop
 """
 import helpers as h
 import math
+import produktkategorier as pk
 
 # creates the dictionary objects and appends them to the list jetSL after splitting it at the ";"
 # file == the file to be read and it is a jetshop file.
 # Checks that the file is in correct format
 # Corrects comma separated floats into point separated floats
 # returns list of libraries with contents from txt file
-def read(file, message=False):
+def read(file, exclude=[], exclusive=[], message=False):
     with open(file) as jetshop:
         # Row being read in the document
         row = 0
         # Errors found during reading of the file. For debugging.
         errors = 0
         # A list of dictionaries containing the product information where every index is one product
-        jetSL = []
+        jetSL = [{}]
         # Every header in the document
-        headers = []
+        headers = getHeaders(file)
+        # Check for kategoryID
+        kategoriID = False
+        for index, value in enumerate(headers):
+            if value == "KategoriID":
+                kategoriID = True
+                kategoriPosition = value 
 
-        # Establish headers
-        for title in range(len(getCategories(file))):
-            jetSL[row][headers[title]] = headers[title]
+        if kategoriID and exclude or exclusive:
+            # Start Reading the file line by line
+            for line in jetshop:
+                # Add a dictionary item into jetSL
+                jetSL.append({})
 
-        # Start Reading the file line by line
-        for line in jetshop:
-            # Add a dictionary item into jetSL
-            jetSL.append({})
-            # For every line we save all the row attributes in this file. Same order as headers.
-            rowAttributes = line.split(";")
-            try:
-                # For every index in headers
-                for title in range(len(headers)):
-                    # We insert a value into jetSL list on the row index with every value for the headers, also replace commas with dots.
-                    jetSL[row][headers[title]] = rowAttributes[title].replace(',', '.')
-            except:
-                print("Failed to read Row " + str(row))
-                print("Content: " + line)
-                errors += 1
-            row += 1
+                exclusiveIDs = categoryStringToIDs(exclusive)
+                excludeIDs = categoryStringToIDs(exclude)
+
+                # For every line we save all the row attributes in this file. Same order as headers.
+                categories, rowAttributes = extractCategoryIDs(headers, line.split(";"))
+                # For every value in exclude check if there is a match, if there is a match, then move on
+                for category in categories:
+                    if category in excludeIDs: # If category is to be excluded, then break and move on to next line
+                        break
+                    elif category in exclusiveIDs and len(exclusiveIDs) > 0: # If categories are exclusive, then only select exclusive lines
+                        try:
+                            # For every index in headers
+                            for index, _ in enumerate(headers):
+                                # We insert a value into jetSL list on the row index with every value for the headers, also replace commas with dots.
+                                jetSL[row][headers[index]] = rowAttributes[index].replace(',', '.')
+                        except:
+                            print("Failed to read category exclusive Row " + str(row))
+                            print("Content: " + line)
+                            errors += 1
+                row += 1
+        elif kategoriID:
+            for line in jetshop:
+                jetSL.append({})
+                categories, rowAttributes = extractCategoryIDs(headers, line.split(";"))
+                try:
+                    # For every index in headers
+                    for index, _ in enumerate(headers):
+                        # We insert a value into jetSL list on the row index with every value for the headers, also replace commas with dots.
+                        jetSL[row][headers[index]] = rowAttributes[index].replace(',', '.')
+                except:
+                    print("Failed to read category Row " + str(row))
+                    print("Content: " + line)
+                    errors += 1
+                row += 1
+        else:
+            # Start Reading the file line by line
+            for line in jetshop:
+                # Add a dictionary item into jetSL
+                jetSL.append({})
+                # For every line we save all the row attributes in this file. Same order as headers.
+                rowAttributes = line.split(";")
+                try:
+                    # For every index in headers
+                    for index, _ in enumerate(headers):
+                        # We insert a value into jetSL list on the row index with every value for the headers, also replace commas with dots.
+                        jetSL[row][headers[index]] = rowAttributes[index].replace(',', '.')
+                except:
+                    print("Failed to read Row " + str(row))
+                    print("Content: " + line)
+                    errors += 1
+                row += 1
         
         if errors >= 1:
             print("Errors found in file: " + str(errors))
         elif message:
             print("No errors found in file.")
-        # Remove empty dictionaries.
-        while not bool(jetSL[-1]):
-            jetSL.pop()
+    # Remove empty dictionaries.
+    i = len(jetSL) - 1
+    while i > -1:
+        if not bool(jetSL[i]):
+            jetSL.pop(i)
+        i -= 1
     return jetSL
 
 
@@ -56,7 +103,7 @@ def read(file, message=False):
 # Prints length of visible Unique Article
 # Prints length of hidden Article
 # Returns list of hidden articles, list of unique articles, list of duplicated articles
-def duplicates(jetSL, message=False):
+def duplicates(jetSL, exclude=[], exclusive=[], message=False):
     doldArtik = []
     uArtik = []
     dArtik = []
@@ -97,7 +144,7 @@ def duplicates(jetSL, message=False):
 ###WRITES A TXT FILE WITH THE OUTPUT ARTICLE IDs###
 # this is used for manually fixing the faulty artikelnummer in the website
 # Uses argument "double" and "hidden" to determine which files should be written
-def write(doldArtik, uArtik, dArtik, argument):
+def write(doldArtik, uArtik, dArtik, argument, exclude=[], exclusive=[]):
     if argument == "double":
         doubles = 0
         with open("dubblaArtiklar.txt", "w") as txt:
@@ -158,9 +205,14 @@ def newPrices(articleList, percentage):
     except:
         print("invalid percentage value. Make sure you have a valid percentage")
         return
+    for key in articleList[0].keys(): # Headers
+        masterString += key + ";"
+    masterString = masterString[:-1]
 
     try:
         for i in range(len(articleList)):
+            if i == 0:
+                continue
             for key, value in articleList[i].items():
                 if key == "Pris exkl. moms" and value != key:
                     masterString += str(pricing(float(value), percentage)[1]).replace(".", ",") + ";"
@@ -170,14 +222,13 @@ def newPrices(articleList, percentage):
     except:
         print("Error! Could not check key 'Pris exkl. moms' during pricing.\nExiting.")
         exit()
-    
     with open("OUTPUT_RENAME_ME.txt", "w") as output:
         output.write(masterString)
 
 # listdic list of dictionaries from pre .txt file with pre-change prices
 # listdic list of dictionaries from post .txt file with post-change prices
 # 
-def logResults(listdic, newlistdic, percentage):
+def logResults(listdic, newlistdic, percentage, exclude=[], exclusive=[]):
     masterString = ""
     listDic = []
     perc = float(percentage)
@@ -201,7 +252,6 @@ def logResults(listdic, newlistdic, percentage):
                 listDic[row]["Prisskillnad procent"] = "Prisskillnad procent"
                 row += 1
                 continue
-
             prisex = i["Pris exkl. moms"].strip()
             priceDiff = float(prisex.replace(",", ".")) - float(listDic[row]["Före Pris exkl. moms"].replace(",", "."))
             if float(listDic[row]["Före Pris exkl. moms"].replace(",", ".")) > 0:
@@ -223,7 +273,7 @@ def logResults(listdic, newlistdic, percentage):
 
 # file argument is txt file
 # Returns list of categories in file
-def getCategories(file):
+def getHeaders(file):
     with open(file, "r") as jetshop:
         # Every header in the document
         headers = []
@@ -243,7 +293,11 @@ def getCategories(file):
             row +=1
 
 # returns selected categories
-def selectCategories(categories):
+def selectCategories(productCategories):
+    categories = []
+    for key in productCategories:
+        categories.append(key)
+
     selected = []
 
     while True:
@@ -274,3 +328,149 @@ def selectCategories(categories):
             print("Adding " + categories[selection] + " to list.\n")
             selected.append(categories[selection])
         print(selected)
+
+#   categoryIDs list of IDs
+#   returns list of categories as strings
+def categoryIDsToString(categoryIDs):
+    categoryStrings = []
+
+    for key, value in pk.produktkategorier:
+        if value in categoryIDs:
+            categoryStrings.append(key)
+
+    return categoryStrings    
+
+# headers, list of header names as strings
+# dataColumn == list of data per column relative to headers
+# Returns list of only Category IDs as strings
+# Returns popped list of data columns
+def extractCategoryIDs(headers, dataColumn):
+    popDataColumn = dataColumn
+    for pos, value in enumerate(headers):
+        if value == "KategoriID":
+            katPos = pos
+            break
+
+    catIDs = []
+    # If there are more indexes in headers than in the data column, then we have multiple category IDs
+    while len(headers) < len(popDataColumn):
+        catIDs.append(popDataColumn[katPos].replace('"', '')) # Add category IDs to the new list
+        popDataColumn.pop(katPos) # Remove index in kategory ID position
+    if len(headers) == len(popDataColumn): # If length is equal then there is either 1 category or 0 categories left
+        catIDs.append(popDataColumn[katPos].replace('"', '')) # Add whatever value we have to new IDs
+        IDstring = "\""
+        for value in catIDs:
+            IDstring += value + ";"
+        if not catIDs:
+            IDstring += "\""
+        IDstring = IDstring[:-1] + "\""
+
+        if "KategoriID" in IDstring:
+            IDstring = IDstring.replace('"', '')
+
+        popDataColumn[katPos] = IDstring
+    return catIDs, popDataColumn
+
+# Writes headers to output file
+def initiateOutputFile(headers):
+    with open("OUTPUT_RENAME_ME.txt", "w") as txt:
+        masterString = ""
+        for line in headers:
+            masterString += line + ";"
+        masterString = masterString[:-1]
+        txt.write(masterString)
+
+# Takes list of categories as string names
+# Returns list of categories as string IDs
+def categoryStringToIDs(categories):
+    categoryIDs = []
+    if categories and categories[0] == "KategoriID": # För första raden.
+        return categories
+    for category in categories:
+        for key in pk.produktkategorier.keys():
+            if category == key:
+                categoryIDs.append(pk.produktkategorier[key])
+    return categoryIDs
+
+def priceUpdateOnlyBase(articleList, percentage, exclude, exclusive):
+    masterString = ""
+    masterProduct = ["string1", -1.0, False, False] # position 0 is article number, position 1 is price as a float, position 2 is a boolean representing exclusion, position 3 is a boolean representing exclusivity.
+    currentProduct = [["string2", "string3"], -2.0, False, False] # position 0 Contains list of article number split by ".", position 1 is price as a float, position 2 is a boolean representing exclusion, position 3 is a boolean representing exclusivity.
+    kategoriID = False
+    excludedIDs = categoryStringToIDs(exclude)
+    exclusiveIDs = categoryStringToIDs(exclusive)
+    for index, value in enumerate(articleList[0]):
+        if value == "KategoriID":
+            kategoriID = True
+            kategoriPosition = index 
+    try:
+        percentage = float(percentage)
+    except:
+        print("invalid percentage value. Make sure you have a valid percentage")
+        return
+    for key in articleList[0].keys(): # Headers
+        masterString += key + ";"
+    masterString = masterString[:-1]
+
+    if kategoriID and excludedIDs or exclusiveIDs:
+        # Skip all exclude articles
+        # Include all exclusive articles if length is not 0
+
+        for d in articleList:
+            categories = d["KategoriID"].replace('"', '').split(";")
+            currentProduct[0] = d["Artikelnummer"].split(".")
+
+            # Set up a master article
+            # If to exclude, then flag [2] True
+            # If to exclusively include, then flag [3] True
+            # Always flag [0] with article number if there is no match
+            # Only flag [1] if there is no match and it is to be included
+            if currentProduct[0][0] not in masterProduct[0]: # If the split article number is not in masterProduct article number then make new master product. We are on a new article.
+                if excludedIDs:
+                    for category in categories:
+                        if category in excludedIDs:
+                            masterProduct[2] = True
+                            masterProduct[0] = currentProduct[0][0]
+                            break
+                        else:
+                            masterProduct[2] = False
+                if masterProduct[2]:
+                    break
+
+                if exclusiveIDs:
+                    for category in categories:
+                        if category in exclusiveIDs:
+                            masterProduct[3] = True
+                            masterProduct[0] = currentProduct[0][0]
+                            masterProduct[1] = float(d["Pris exkl. moms"]) # Price
+                        else:
+                            masterProduct[3] = False
+
+                else:
+                    masterProduct[3] = True
+                    masterProduct[0] = currentProduct[0][0]
+                    masterProduct[1] = float(d["Pris exkl. moms"])
+            if masterProduct[3] and not masterProduct[2]:
+                for key, value in d.items():
+                    if key == "Pris exkl. moms" and value != key:
+                        currentProduct[1] = float(d["Pris exkl. moms"])
+                        priceDiff = currentProduct[1] - masterProduct[1]
+                        floatPriceString = str(pricing(masterProduct[1], percentage)[1] + priceDiff)
+                        floatPriceStringList = floatPriceString.split(".")
+                        floatingPointInteger = round(int(floatPriceStringList[1]), -2)
+                        priceString = floatPriceStringList[0] + "." + str(floatingPointInteger)
+                        masterString += str(priceString).replace(".", ",") + ";" # Price of master product used for pricing.
+                    else:
+                        masterString += value + ";"
+                masterString = masterString[:-1]
+    with open("OUTPUT_RENAME_ME.txt", "w") as output:
+        output.write(masterString)
+
+# jetshoplist, list of dictionaries from jetshop data
+# writes a list of all products that don't have a category
+# returns void
+def writeProductsWithoutCategories(jetshoplist):
+    with open("ingaKategorier", "w") as file:
+        for line in jetshoplist:
+            if line["KategoriID"] == '""':
+                file.write(line["Artikelnummer"] + " : " + line["KategoriID"] + "\n")

@@ -1,5 +1,6 @@
 import re
 import jetshop as js
+import produktkategorier as pk
 
 def pricing(jetshoplist, pricelist):
     # check if the article in jetshop exists in visma
@@ -32,6 +33,10 @@ def main():
     mismatch = []
     #list to hold old jetshop
     oldJetSL = []
+    # Exclude for excluding categories
+    exclude = []
+    # Exclusive for only selected categories
+    exclusive = []
 
     # File to read
     jetshopfile = "./jetshop/jetshop.txt"
@@ -42,6 +47,9 @@ def main():
         print("3) Write files for hidden articles")
         print("4) Write files for duplicate articles")
         print("5) Write a semicolon separated txt file for jetshop with new prices")
+        print("6) Define excluded or exclusive categories")
+        print("7) Write a list of articles without categories")
+        print("8) Write a semicolon separated txt file for jetshop with new prices but only update base articles")
         print("q) Quit program")
 
         choice = input("-->")
@@ -52,22 +60,22 @@ def main():
 
         if choice == "1":
             # List of libraries from jetshop.txt to jetSL
-            js.read(jetshopfile, True)
+            js.read(jetshopfile, exclude, exclusive, True)
 
         if choice == "2":
             # Read file and check for duplicates
-            js.duplicates(js.read(jetshopfile), True)
+            js.duplicates(js.read(jetshopfile, exclude, exclusive), True)
 
         if choice == "3":
             # Write hidden files
-            jetshoplistdic = js.read(jetshopfile)
+            jetshoplistdic = js.read(jetshopfile, exclude, exclusive)
             dold, unik, dupl = js.duplicates(jetshoplistdic)
 
             js.write(dold, unik, dupl, "hidden")
 
         if choice == "4":
             # Write hidden files
-            jetshoplistdic = js.read(jetshopfile)
+            jetshoplistdic = js.read(jetshopfile, exclude, exclusive)
             dold, unik, dupl = js.duplicates(jetshoplistdic)
 
             js.write(dold, unik, dupl, "double")
@@ -76,8 +84,32 @@ def main():
             # Write a new ouput file with new prices
             percentage = input("Percentage in decimal format to increase as in 11% would be 1.11.\nInput: ")
 
-            jetshoplistdic = js.read(jetshopfile)
+            jetshoplistdic = js.read(jetshopfile, exclude, exclusive)
             js.newPrices(jetshoplistdic, percentage)
+            # Write dokumentation for everything
+            js.logResults(jetshoplistdic, js.read("OUTPUT_RENAME_ME.txt", exclude, exclusive), percentage)
+        
+        if choice == "6":
+            menuChoice = int(input("1. Exclusive categories\n2. Excluded categories\n3. Go back\ninput: "))
+
+            if menuChoice == 1:
+                exclusive = js.selectCategories(pk.produktkategorier)
+                print(exclusive)
+            elif menuChoice == 2:
+                exclude = js.selectCategories(pk.produktkategorier)
+                print(exclude)
+            elif menuChoice == 3:
+                continue
+        
+        if choice == "7":
+            js.writeProductsWithoutCategories(js.read(jetshopfile))
+
+        if choice == "8":
+            # Write a new ouput file with new prices
+            percentage = input("Percentage in decimal format to increase as in 11% would be 1.11.\nInput: ")
+
+            jetshoplistdic = js.read(jetshopfile)
+            js.priceUpdateOnlyBase(jetshoplistdic, percentage, exclude, exclusive)
             # Write dokumentation for everything
             js.logResults(jetshoplistdic, js.read("OUTPUT_RENAME_ME.txt"), percentage)
 
