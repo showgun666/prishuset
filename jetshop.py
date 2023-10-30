@@ -52,8 +52,18 @@ def read(file, exclude=[], exclusive=[], message=False):
                             print("Failed to read category exclusive Row " + str(row))
                             print("Content: " + line)
                             errors += 1
+                    elif len(exclusiveIDs) == 0:
+                        try:
+                            # For every index in headers
+                            for index, _ in enumerate(headers):
+                                # We insert a value into jetSL list on the row index with every value for the headers, also replace commas with dots.
+                                jetSL[row][headers[index]] = rowAttributes[index].replace(',', '.')
+                        except:
+                            print("Failed to read category exclusive Row " + str(row))
+                            print("Content: " + line)
+                            errors += 1
                 row += 1
-        elif kategoriID:
+        elif kategoriID and not exclusive:
             for line in jetshop:
                 jetSL.append({})
                 categories, rowAttributes = extractCategoryIDs(headers, line.split(";"))
@@ -474,3 +484,27 @@ def writeProductsWithoutCategories(jetshoplist):
         for line in jetshoplist:
             if line["KategoriID"] == '""':
                 file.write(line["Artikelnummer"] + " : " + line["KategoriID"] + "\n")
+
+# Takes two files, the new log and an old log history file
+# Writes all the new unique articles into the newArticles.txt file
+# Writes all the unique articles from both files into the newHistoryLog.txt file
+# NewArticles.txt file is to see what new articles need to be changed or added.
+# newHistoryLog.txt file is to both have a history of all the changes as well as to be able to make sure we don't update the same product twice.
+def historyLogNoDuplicates(newLog, oldLog):
+    with open(newLog, 'r') as new, open(oldLog, 'r') as old, open('newArticles.txt', 'w') as newArticles, open('newHistoryLog.txt', 'w') as historyLog:
+        oldList = []
+        oldListArticles = []
+        newList = []
+        for line in old:
+            oldList.append(line)
+            oldListArticles.append(line.split(";")[0])
+        for line in new:
+            newList.append(line)
+        
+        input("HAVE YOU BACKED UP THE PREVIOUS LOG FILES???\n SPECIFICALLY newArticles.txt AND newHistoryLog.txt \nPRESS ENTER TO CONTINUE OR CTRL-D TO ABORT")
+        for i in newList:
+            if i.split(";")[0] not in oldListArticles:
+                newArticles.write(i)
+                oldList.append(i)
+        for i in oldList:
+            historyLog.write(i)

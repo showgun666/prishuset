@@ -50,6 +50,7 @@ def main():
         print("6) Define excluded or exclusive categories")
         print("7) Write a list of articles without categories")
         print("8) Write a semicolon separated txt file for jetshop with new prices but only update base articles")
+        print("9) Write two new text files, one with the new unique articles that have been updated, one with the history log of all changes.")
         print("q) Quit program")
 
         choice = input("-->")
@@ -112,6 +113,11 @@ def main():
             js.priceUpdateOnlyBase(jetshoplistdic, percentage, exclude, exclusive)
             # Write dokumentation for everything
             js.logResults(jetshoplistdic, js.read("OUTPUT_RENAME_ME.txt"), percentage)
+
+        if choice == "9":
+            # First file is the output file for new price lists.
+            # The second file is the output file for this option or a different output file for new price lists to compare against.
+            js.historyLogNoDuplicates(input("Name of file with new prices: "), input("Name of file with previous changes: "))
 
         input("Press enter to continue...")
 
