@@ -62,14 +62,28 @@ Ett samlingsdokument där alla produkter som blivit uppdaterade läggs till rad 
 Produktkategorier och ID
 
 TO DO
-Programmet ska kunna hantera olika mängd argument i dokumentet. Om det finns dölj artikel eller ej eller ej.
-Produktkategorier eller ej.
+LÖST Programmet ska kunna hantera olika mängd argument i dokumentet. Om det finns dölj artikel eller ej eller ej.
+LÖST Produktkategorier eller ej.
 
-Förmåga att sortera per kategori(Eller annat värde) så att endast vissa produkter uppdateras.
-Sortering kan ske inklusive och/eller inklusive
+LÖST Förmåga att sortera per kategori(Eller annat värde) så att endast vissa produkter uppdateras.
+PÅ GÅNG Sortering kan ske inklusive och/eller inklusive
 
-En historikfil som går att använda för att ha koll på uppdateringar osv.
+LÖST MEN KRÄVER LITE MANUELL HANTERING En historikfil som går att använda för att ha koll på uppdateringar osv.
 
-Förmåga att uppdatera priser med och utan gravyr separat.
+LÖST MEN HA LITE KOLL PÅ PAKETPRIS OCH MÄNGDRABATTER OSV Förmåga att uppdatera priser med och utan gravyr separat.
 
 Bättre support i menyn så att det går att se alla val man har gjort och vad som kommer göras
+
+Det som ger är att programmet läser artikelnummer ett efter ett.
+Om artikelnumret är detsamma fram till första punkten så identifieras det som ett unikt artikelnummer och ses som grundpriset för produkten.
+Sedan går den igenom andra artiklar som har samma artikelnummer men andra suffix efter punkten och justerar priset utan mellanskillnaden.
+Om det finns gränsfall där detta skapar problem så kan det behöva justeras manuellt. Till exempel vid produkter med mängdrabatt, då påslaget för större antal inte ändras.
+Pbd109 11:-, priset höjs enligt kalkyl
+Pbd109.02.attr2 26:-, mellanskillnaden på 15:- plussas på på baspriset som höjts enligt första pbd109
+
+	PTME08901
+	PBD106
+ 	PBDI320601V8BLGE
+
+Har lagt till produktkategori på en del produkter som saknade det som uppenbarligen skulle ha det.
+Annars finns en lista på produkter som saknar produktkategori men som kanske ska tas bort från hemsidan.
