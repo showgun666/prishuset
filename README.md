@@ -87,3 +87,62 @@ Pbd109.02.attr2 26:-, mellanskillnaden på 15:- plussas på på baspriset som h�
 
 Har lagt till produktkategori på en del produkter som saknade det som uppenbarligen skulle ha det.
 Annars finns en lista på produkter som saknar produktkategori men som kanske ska tas bort från hemsidan.
+
+
+-- Höjning 1 --
+Medaljer, medaljband och medaljetuier
+
+Kategorier:
+Medaljband långa & korta
+Medaljer
+Medaljetuier
+Medaljer Neutrala
+Medaljer Präglade
+Medaljer Specialtillverkade
+Medaljaskar & etuier
+Rea-medaljer
+
+11% Höjning med rundning enligt ö.k.
+
+OBS att produkter med 100 250 500 osv pack kan ha felaktiga priser enligt nuvarande modell. Höjs manuellt enligt första attributet. Markus har koll.
+PG42208G och PG42206G pris ska också ickejusteras.
+
+Importlogg
+12:28:52 - Import av data slutförd med fel. Filnamn: Jetshop_Höjning_Medaljer__band_och_etuier_2023-11-18.csv
+12:28:52 - Felrapport import: Slut
+Fel nummer 5:  - Ett fel har inträffat vid import, försök igen. Om felet kvarstår kontakta support.
+Fel nummer 4:  - Artikelnumret är inte unikt på attributet , Artikelnr: PTSME01801
+Fel nummer 3:  - Artikelnumret är inte unikt på attributet , Artikelnr: PBD70.27
+Fel nummer 2:  - Artikelnumret är inte unikt på attributet , Artikelnr: PBD70.02
+Fel nummer 1:  - Artikelnumret är inte unikt på attributet , Artikelnr: PBD70.01
+12:28:52 - Felrapport import: Start
+12:28:35 - 
+Startar import av csvfil: Jetshop_Höjning_Medaljer__band_och_etuier_2023-11-18.csv
+12:28:04 - Fil sparad! Filnamn: Jetshop_Höjning_Medaljer__band_och_etuier_2023-11-18.csv
+
+
+12:51:51 - Import av data slutförd. Filnamn: Medaljband_2023-11-20.csv
+12:51:51 - Importerade/uppdaterade 42 produkt(er) och 47 attribut av 89 inläst(a) produkter/attribut från filen med 89 rad(er).
+12:51:43 - 
+Startar import av csvfil: Medaljband_2023-11-20.csv
+12:51:32 - Fil sparad! Filnamn: Medaljband_2023-11-20.csv
+
+
+
+Alla medaljband hade inte rätt ändelser så pris för 201+ är oförändrat sedan tidigare. Kommer behöva justeras manuellt artikelnummer och pris.
+
+08:33:40 - Import av data slutförd med fel. Filnamn: Medaljer_2023-11-22.csv
+08:33:40 - Felrapport import: Slut
+Fel nummer 5:  - Ett fel har inträffat vid import, försök igen. Om felet kvarstår kontakta support.
+Fel nummer 4:  - Artikelnumret är inte unikt på attributet , Artikelnr: PTSME01801
+Fel nummer 3:  - Artikelnumret är inte unikt på attributet , Artikelnr: PBD70.27
+Fel nummer 2:  - Artikelnumret är inte unikt på attributet , Artikelnr: PBD70.02
+Fel nummer 1:  - Artikelnumret är inte unikt på attributet , Artikelnr: PBD70.01
+08:33:40 - Felrapport import: Start
+08:33:33 - 
+Startar import av csvfil: Medaljer_2023-11-22.csv
+08:33:19 - Fil sparad! Filnamn: Medaljer_2023-11-22.csv
+
+PBB66 hade helt annat artikelnummer från produkten före den och fick justeras manuellt.
+PBV2GR medaljband gröns attribut har ett extra P i sig. PBVP2GR. Det gjorde att den inte uppdaterades som den skulle. manuellt justerat pris men ej artikelnummer.
+PBV2RAIN har en extra 2:a på slutet i sina artikelattribut. PBV2RAIN2. Samma som ovan.
