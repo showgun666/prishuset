@@ -70,7 +70,7 @@ produktkategorier = {
     "Medaljer Neutrala" : "244",
     "Medaljer Präglade" : "245",
     "Medaljer Specialtillverkade" : "246",
-    "Medaljband långa & korta" : "247",
+    "Medaljband långa & korta " : "247",
     "Medaljaskar & etuier" : "248",
     "Rea-medaljer" : "289",
     "Pokaler Små & Mellan" : "250",
