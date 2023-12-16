@@ -94,7 +94,7 @@ def read(file, exclude=[], exclusive=[], message=False):
                     print("Content: " + line)
                     errors += 1
                 row += 1
-        
+
         if errors >= 1:
             print("Errors found in file: " + str(errors))
         elif message:
@@ -205,6 +205,9 @@ def pricing(currentPrice, percentage):
         newPrice = h.rounding(increasedPrice, range2rounddir, range2round)
     else:
         newPrice = h.rounding(increasedPrice, range3rounddir, range3round)
+
+    if percentage == 0:
+        return [currentPrice * tax, currentPrice]
 
     return [newPrice, newPrice / tax]
 
@@ -348,7 +351,7 @@ def categoryIDsToString(categoryIDs):
         if value in categoryIDs:
             categoryStrings.append(key)
 
-    return categoryStrings    
+    return categoryStrings
 
 # headers, list of header names as strings
 # dataColumn == list of data per column relative to headers
@@ -435,7 +438,13 @@ def priceUpdateOnlyBase(articleList, percentage, exclude, exclusive):
             # If to exclusively include, then flag [3] True
             # Always flag [0] with article number if there is no match
             # Only flag [1] if there is no match and it is to be included
-            if currentProduct[0][0] not in masterProduct[0]: # If the split article number is not in masterProduct article number then make new master product. We are on a new article.
+            masterLen = len(masterProduct[0])
+            currentLen = len(currentProduct[0][0])
+            shorterAttributeName = False
+            if currentLen >= masterLen and currentProduct[0][0][:masterLen] in masterProduct[0]:
+                shorterAttributeName = True
+
+            if currentProduct[0][0] not in masterProduct[0] and not shorterAttributeName: # If the split article number is not in masterProduct article number then make new master product. We are on a new article.
                 if excludedIDs:
                     for category in categories:
                         if category in excludedIDs:
@@ -449,25 +458,31 @@ def priceUpdateOnlyBase(articleList, percentage, exclude, exclusive):
 
                 if exclusiveIDs:
                     for category in categories:
-                        if category in exclusiveIDs:
+                        if category in exclusiveIDs or category == "" and currentProduct[0][0][:-2] in masterProduct[0][:-2]:
                             masterProduct[3] = True
                             masterProduct[0] = currentProduct[0][0]
-                            masterProduct[1] = float(d["Pris exkl. moms"]) # Price
+                            masterProduct[1] = float(d["Pris exkl. moms"]) # Price exkl. moms
+                            break
                         else:
                             masterProduct[3] = False
 
                 else:
                     masterProduct[3] = True
                     masterProduct[0] = currentProduct[0][0]
-                    masterProduct[1] = float(d["Pris exkl. moms"])
+                    masterProduct[1] = float(d["Pris exkl. moms"]) # Price exkl. moms
             if masterProduct[3] and not masterProduct[2]:
                 for key, value in d.items():
                     if key == "Pris exkl. moms" and value != key:
-                        currentProduct[1] = float(d["Pris exkl. moms"])
+                        currentProduct[1] = float(d["Pris exkl. moms"]) # Price exkl. moms
                         priceDiff = currentProduct[1] - masterProduct[1]
-                        floatPriceString = str(pricing(masterProduct[1], percentage)[1] + priceDiff)
+                        floatPriceString = str(pricing(masterProduct[1], percentage)[1] + priceDiff) # Change price by pricing
                         floatPriceStringList = floatPriceString.split(".")
-                        floatingPointInteger = round(int(floatPriceStringList[1]), -2)
+
+                        if len(floatPriceStringList[1]) > 3: # If the rounding becomes weird, we round and fix it
+                            floatingPointInteger = round(int(floatPriceStringList[1]), -2)
+                        else:
+                            floatingPointInteger = int(floatPriceStringList[1])
+
                         priceString = floatPriceStringList[0] + "." + str(floatingPointInteger)
                         masterString += str(priceString).replace(".", ",") + ";" # Price of master product used for pricing.
                     else:
@@ -500,7 +515,7 @@ def historyLogNoDuplicates(newLog, oldLog):
             oldListArticles.append(line.split(";")[0])
         for line in new:
             newList.append(line)
-        
+
         input("HAVE YOU BACKED UP THE PREVIOUS LOG FILES???\n SPECIFICALLY newArticles.txt AND newHistoryLog.txt \nPRESS ENTER TO CONTINUE OR CTRL-D TO ABORT")
         for i in newList:
             if i.split(";")[0] not in oldListArticles:
