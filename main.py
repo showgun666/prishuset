@@ -1,5 +1,6 @@
 import re
 import jetshop as js
+import produktkategorier as pk
 
 def pricing(jetshoplist, pricelist):
     # check if the article in jetshop exists in visma
@@ -32,6 +33,10 @@ def main():
     mismatch = []
     #list to hold old jetshop
     oldJetSL = []
+    # Exclude for excluding categories
+    exclude = []
+    # Exclusive for only selected categories
+    exclusive = []
 
     # File to read
     jetshopfile = "./jetshop/jetshop.txt"
@@ -39,7 +44,13 @@ def main():
     while True:
         print("1) Read jetshop.txt and print errors")
         print("2) Check jetshop.txt for duplicate artikelnummer")
-        print("3) Write files for hidden articles and duplicate articles")
+        print("3) Write files for hidden articles")
+        print("4) Write files for duplicate articles")
+        print("5) Write a semicolon separated txt file for jetshop with new prices")
+        print("6) Define excluded or exclusive categories")
+        print("7) Write a list of articles without categories")
+        print("8) Write a semicolon separated txt file for jetshop with new prices but only update base articles")
+        print("9) Write two new text files, one with the new unique articles that have been updated, one with the history log of all changes.")
         print("q) Quit program")
 
         choice = input("-->")
@@ -50,18 +61,67 @@ def main():
 
         if choice == "1":
             # List of libraries from jetshop.txt to jetSL
-            js.read(jetshopfile)
+            js.read(jetshopfile, exclude, exclusive, True)
 
         if choice == "2":
             # Read file and check for duplicates
-            js.duplicates(js.read(jetshopfile))
+            js.duplicates(js.read(jetshopfile, exclude, exclusive), True)
 
         if choice == "3":
-            # Write
-            jetshoplistlib = js.read(jetshopfile)
+            # Write hidden files
+            jetshoplistdic = js.read(jetshopfile, exclude, exclusive)
+            dold, unik, dupl = js.duplicates(jetshoplistdic)
 
-            js.write(js.duplicates(jetshoplistlib))
+            js.write(dold, unik, dupl, "hidden")
 
+        if choice == "4":
+            # Write hidden files
+            jetshoplistdic = js.read(jetshopfile, exclude, exclusive)
+            dold, unik, dupl = js.duplicates(jetshoplistdic)
+
+            js.write(dold, unik, dupl, "double")
+        
+        if choice == "5":
+            # Write a new ouput file with new prices
+            percentage = input("Percentage in decimal format to increase as in 11% would be 1.11.\nInput: ")
+
+            jetshoplistdic = js.read(jetshopfile, exclude, exclusive)
+            js.newPrices(jetshoplistdic, percentage)
+            # Write dokumentation for everything
+            js.logResults(jetshoplistdic, js.read("OUTPUT_RENAME_ME.txt", exclude, exclusive), percentage)
+        
+        if choice == "6":
+            menuChoice = int(input("1. Exclusive categories\n2. Excluded categories\n3. Go back\ninput: "))
+
+            if menuChoice == 1:
+                exclusive = js.selectCategories(pk.produktkategorier)
+                print(exclusive)
+            elif menuChoice == 2:
+                exclude = js.selectCategories(pk.produktkategorier)
+                print(exclude)
+            elif menuChoice == 3:
+                continue
+        
+        if choice == "7":
+            js.writeProductsWithoutCategories(js.read(jetshopfile))
+
+        if choice == "8":
+            # Write a new ouput file with new prices
+            percentage = input("Percentage in decimal format to increase as in 11% would be 1.11.\nInput: ")
+
+            jetshoplistdic = js.read(jetshopfile)
+            js.priceUpdateOnlyBase(jetshoplistdic, percentage, exclude, exclusive)
+            # Write dokumentation for everything
+            js.logResults(jetshoplistdic, js.read("OUTPUT_RENAME_ME.txt"), percentage)
+
+        if choice == "9":
+            # First file is the output file for new price lists.
+            # The second file is the output file for this option or a different output file for new price lists to compare against.
+            js.historyLogNoDuplicates(input("Name of file with new prices: "), input("Name of file with previous changes: "))
+
+        input("Press enter to continue...")
+
+"""
     # Creates the visma stuff
     with open("prislistavisma1.txt") as visma:
         for line in visma :
@@ -73,7 +133,7 @@ def main():
                 "Artikelnummer" : vart.strip(),
                 "Pris exkl. moms" : vprice.strip(),
             })
-
+"""
     # Jag vill jämföra artikelnummer i visma med artikelnummer bland de unika artikelnumren i jetshop. Om ett artikelnummer i jetshop INTE finns i visma, så måste den korrigeras
     # Sedan vill jag jämföra priserna i visma med priserna i jetshop. Jag vill ha priset på allt som inte är exakt samma. Kan börja med allt som är billigare i visma än i jetshop.
 
