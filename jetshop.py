@@ -523,3 +523,5 @@ def historyLogNoDuplicates(newLog, oldLog):
                 oldList.append(i)
         for i in oldList:
             historyLog.write(i)
+
+### REFACTORING BADLY NEEDED THIS CODE IS HORRIBLE

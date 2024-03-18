@@ -87,3 +87,6 @@ def test_categoryStringToIDs():
     test2 = j.categoryStringToIDs(categories2)
 
     assert test1 == ["187"] and test2 == ["187", "211", "245"]
+
+
+### NEED TO ADD BETTER TESTS
