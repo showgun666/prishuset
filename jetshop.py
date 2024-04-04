@@ -124,25 +124,33 @@ def duplicates(jetSL, exclude=[], exclusive=[], message=False):
             continue
 
         # Go through each line, if it has a value in key "Dölj produkt", save that value in memdold. if it doesn't, set the value in that key to 0.
-        # I have no idea what this is or what it is supposed to do.
+        # Currently nothing is done with this. Used to print hidden products in this function and this just remained.
         try:
             memdold = int(jetSL[i]["Dölj produkt"])
         except:
             jetSL[i]["Dölj produkt"] = 0
 
-        # Go through each artikelnummer value, if it's Dölj Produkt value is 1 then stove it away in doldArtik. We don't want to see it.
-        # If the artikelnummer value is not in the list of unique artikelnummer values, put it in there.
-        # If the artikelnummer value is in unique artikelnummer value, we check if it is in the duplicate values. if not, we put it in there.
-        # This way we know what values have duplicates and need manual fixing
+        # Go through each artikelnummer value
         if jetSL[i]["Dölj produkt"] == "1":
+            # if it's Dölj Produkt value is 1 then stove it away in doldArtik.
             doldArtik.append(jetSL[i]["Artikelnummer"])
-        elif jetSL[i]["Artikelnummer"] not in uArtik:
+
+        if jetSL[i]["Artikelnummer"] not in uArtik:
+            # If the artikelnummer value is not in the list of unique artikelnummer values, put it in there.
             uArtik.append(jetSL[i]["Artikelnummer"])
-        elif jetSL[i]["Artikelnummer"] not in dArtik:
+        else:
+            # If the artikelnummer value is in unique artikelnummer value, we check if it is in the duplicate values. if not, we put it in there.
             dArtik.append(jetSL[i]["Artikelnummer"])
+        # This way we know what values have duplicates and need manual fixing
 
     # När den går igenom varje rad så kommer den ihåg det senaste värdet för "Dölj produkt"
     # Om den kommer till en rad som inte har ett värde i "Dölj produkt" så anger den värdet av det senaste "Dölj produkt" som den kommer ihåg.
+    acceptedCopies = int(input("How many copies are accepted? Standard is 2\n only numbers can be used."))
+    counting = []
+    for entry in dArtik:
+        if dArtik.count(entry) >= acceptedCopies:
+            counting.append(entry)
+    dArtik = counting
 
     # prints the length of dArtik so that I can see how many unique duplicates there are.
     if message:

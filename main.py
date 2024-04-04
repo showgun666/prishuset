@@ -75,7 +75,7 @@ def main():
             js.write(dold, unik, dupl, "hidden")
 
         if choice == "4":
-            # Write hidden files
+            # Write double files
             jetshoplistdic = js.read(jetshopfile, exclude, exclusive)
             dold, unik, dupl = js.duplicates(jetshoplistdic)
 
